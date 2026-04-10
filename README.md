@@ -1,190 +1,115 @@
-# MICA-Kernel v1.0
+# MICA-Kernel v3.0 — TQIM-Davoh v3
 
-**kyriosMICA Research Institute · Benin, West Africa**
+**kyriosMICA Research Institute** · Bénin, West Africa
+*Decoding Life. Encoding the Future.*
 
-> *"Decoding Life. Encoding the Future."*
+## API
 
----
+**Production**: https://api.kyriosmica.com
+**Documentation**: https://api.kyriosmica.com/docs
 
-## What is MICA-Kernel?
+## TQIM-Davoh v3 — Complete Implementation
 
-MICA-Kernel is the official computational engine of the
-**TQIM-Davoh (Théorie Quantique de l'Information Moléculaire de Davoh)**
-— the first mathematical framework that treats DNA not as a chemical
-alphabet, but as a **quantum information processor**.
+### 4 Postulats Fondateurs
+- **Indétermination** — Per-bond Z_j, |ψ⟩ = √P(-1)|−1⟩ + √P(0)|0⟩ + √P(+1)|+1⟩
+- **Cohérence** — MIH-21 cavity (21bp = 2 B-DNA turns), MPS Level 1+2
+- **Résonance** — ν_TIV = E_res/h from MRK eigenvalue decomposition
+- **Mutabilité** — P(mutation) ∝ P(-1) × P(+1), rank ≤ 3 → HIGH risk
 
-**MICA** = *Matrice d'Intrication Coordonnée par les Amplitudes*
-*(Matrix of Intrication Coordinated by Amplitudes)*
+### Physics Engine
+- **Bell/GHZ filter**: AT P(|−1,−1⟩)→0 · CG triple extreme→0
+- **MPS contraction**: Level 1 (codon) + Level 2 (7-codon MIH-21 cavity)
+- **T₃-Net QNN**: Ternary neural network with STE backpropagation
+- **Na⁺/K⁺/Mg²⁺**: Individual ion Debye-Hückel (I = 0.5 × Σ cᵢzᵢ²)
+- **Von Neumann entropy**: −Tr(ρ log₂ ρ) on cavity density matrix
+- **B/A/Stress classification**: Global conformational analysis
+- **3-mode inference**: ARGMAX / BOLTZMANN / SAMPLE from ρ_MIH21
+- **Epigenetics**: 5mC, 5hmC, m6A, m4C with bond-specific corrections
+- **Thermo-classification**: tendu / perturbé / équilibre
 
-Given a DNA sequence and biological conditions (temperature, pH,
-ionic strength), MICA-Kernel computes the complete **Qudits-36
-quantum signature** of every codon — a set of invariants that
-no other tool in the world calculates.
+### Force Field
+Phase 1: CHARMM36 (additive) — Best et al. JCTC 2012, Šponer et al. 2018
+Phase 2 (2027-2028): Drude polarisable
 
----
+### Constants (FLAG_CALIBRATE)
+| Constant | Value | Flag |
+|----------|-------|------|
+| E_PAULI | 0.400 kcal/mol | DFT |
+| λ_BASE | 0.12 | NMR |
+| α_Mg | 0.08 kcal/mol/mM | DFT+Mg²⁺ |
+| α_σ | 0.5 | NMR |
+| k_prot | 0.15 kcal/mol | ITC |
+| κ_AT | 0.30 | Šponer 2018 |
+| κ_CG | 0.50 | Šponer 2018 |
 
-## The Four Postulates (TQIM-Davoh)
+## Endpoints
 
-| Postulate | Name | Formula |
-|-----------|------|---------|
-| I | **Indétermination** | `|ψ⟩ = α(-1)|−1⟩ + α(0)|0⟩ + α(+1)|+1⟩` |
-| II | **Cohérence** | MIH-21 heptadic entanglement (2 B-DNA turns) |
-| III | **Résonance** | `ν_TIV = E_res / h` |
-| IV | **Mutabilité** | `P(mut) ∝ P(-1) × P(+1)` |
-
----
-
-## Installation
-
-```bash
-git clone https://github.com/kyriosMICA/mica-kernel
-cd mica-kernel
-pip install numpy scipy
+```
+GET  /            Institution info
+GET  /health      Health check
+POST /analyze     Full sequence analysis
+POST /codon       Single codon + Monte Carlo + MPS
+POST /mih21       MIH-21 cavity (7 codons)
+POST /conditions  Per-bond quantum state
+POST /mutability  Mutation risk map
+GET  /examples    Example requests
 ```
 
----
-
-## Quick Start
-
-```python
-from mica import analyze_sequence
-
-# Analyze any DNA sequence
-result = analyze_sequence(
-    sequence       = "ATGGATTATCCTTATGAATTTGCTCCT",
-    T_K            = 310.0,   # Body temperature
-    pH             = 7.4,     # Physiological
-    ionic_strength = 0.15,    # Serum
-    run_mc         = True,    # Monte Carlo quantum collapse
-    mc_samples     = 1000,
-)
-
-print(f"MRK rank mean : {result['summary']['mrk_rank_mean']}")
-print(f"High-risk sites: {result['summary']['high_risk_sites']}")
-print(f"MIH-21 windows : {result['summary']['n_mih21_windows']}")
-```
-
----
-
-## Command Line
+## Example
 
 ```bash
-# Demo mode
+curl -X POST https://api.kyriosmica.com/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sequence": "ATGGATTATCCTTATGAATTTGCTCCT",
+    "conditions": {
+      "temperature_K": 310.15,
+      "pH": 7.4,
+      "sodium_mM": 140,
+      "potassium_mM": 5,
+      "magnesium_mM": 2.5
+    },
+    "topology": {
+      "supercoiling_density": -0.06,
+      "form": "B-DNA"
+    },
+    "epigenetics": [
+      {"position": 1, "type": "5mC"}
+    ],
+    "analysis": {
+      "force_field": "CHARMM36",
+      "run_mc": true,
+      "mc_samples": 500
+    }
+  }'
+```
+
+## Validation
+- **NR3C1**: 777 codons, ΔRank MRK pH 7.4→6.8 = +2.0 uniform
+- **SARS-CoV-2**: 100% rank-3 sites = known mutation hotspots (p=0.0002)
+- **Collaboration**: Julien Boblique · SET Theory · DOI: 10.23880/izab-16000673
+
+## Deploy
+
+```bash
+# Render (auto-deploy from GitHub)
+# Procfile: web: uvicorn api:app --host 0.0.0.0 --port $PORT
+
+# Local
+pip install -r requirements.txt
 python main.py --demo
-
-# Analyze a sequence
-python main.py --seq ATGCCCGAT --T 310 --pH 7.4
-
-# Full analysis with Monte Carlo
-python main.py --seq ATGCCC... --mc --mc-samples 2000 --output results.json
-
-# From FASTA file
-python main.py --fasta gene.fasta --T 310 --pH 6.8 --ionic 0.20
-
-# Stress condition simulation (pH 6.0)
-python main.py --seq ATGCCC... --T 310 --pH 6.0 --output stress.json
+uvicorn api:app --host 0.0.0.0 --port 8000
 ```
 
----
+## References
 
-## What MICA-Kernel Computes
-
-For each codon in the input sequence:
-
-| Invariant | Description |
-|-----------|-------------|
-| `evk_label` | EVK space (e.g. AT×2+CG → ℝ⁷) |
-| `rank` | MRK rank — conformational signature |
-| `frobenius` | Spectral coupling intensity |
-| `E_res` | Dominant resonance energy (kcal/mol) |
-| `nu_TIV_THz` | Vibrational frequency (THz) |
-| `P_mut_pct` | Mutation probability % (Postulat IV) |
-| `risk_level` | HIGH / MEDIUM / LOW |
-| `var_M` | Conformational variance (MC) |
-| `H_rank_bits` | Conformational entropy (bits) |
-
-For every 7-codon window (MIH-21):
-
-| Invariant | Description |
-|-----------|-------------|
-| `nu_TIV_THz` | Cavity resonance frequency |
-| `cavity_stability` | STABLE / MODERATE / UNSTABLE |
-| `mean_rank` | Average MRK rank |
+1. Watson & Crick (1953). Nature, 171, 737-738.
+2. Shannon (1949). Bell Syst. Tech. J., 28(4), 656-715.
+3. Best et al. (2012). JCTC, 8, 3257. [CHARMM36]
+4. Šponer et al. (2018). Chem.Rev., 118, 4177.
+5. Davoh, C.E. (2026). Qudits-36. kyriosMICA. DOI: 10.5281/zenodo.19454825.
 
 ---
 
-## Pre-registered Prediction (April 2026)
-
-> **Codons with MRK rank ≤ 3 in SARS-CoV-2 Spike protein are
-> predicted as preferential mutation sites in future variants.**
->
-> Statistical validation: sites with rank ≤ 3 show 100% overlap
-> with known variant mutation hotspots (Alpha/Beta/Delta/Omicron).
-> Mann-Whitney p = 0.0002. Point-biserial r = -0.482, p = 0.0001.
->
-> This prediction is time-stamped April 2026 and will be verified
-> against GISAID data over the next 12-24 months.
-
----
-
-## Biological Conditions Supported
-
-```python
-# Physiological
-result = analyze_sequence(seq, T_K=310, pH=7.4, ionic_strength=0.15)
-
-# Chronic stress / mild acidosis
-result = analyze_sequence(seq, T_K=310, pH=6.8, ionic_strength=0.18)
-
-# Fever
-result = analyze_sequence(seq, T_K=312, pH=7.4, ionic_strength=0.15)
-
-# In vitro (room temperature)
-result = analyze_sequence(seq, T_K=300, pH=7.0, ionic_strength=0.10)
-
-# Extreme acidosis (tumor microenvironment)
-result = analyze_sequence(seq, T_K=310, pH=5.5, ionic_strength=0.20)
-```
-
----
-
-## Scientific Framework
-
-- **Qudits-36**: Ternary vector space T₃ = {-1, 0, +1}
-- **EVK**: Kyriosmica Vector Space (direct sum of H-bond spaces)
-- **ERK**: Kyriosmica Resonance Energy
-- **MRK**: Kyriosmica Resonance Matrix (Hamiltonian H_MRK)
-- **MIH-21**: Heptadic Intrication Model (2 B-DNA turns = 21 bp)
-- **CHARMM36**: Additive force field (Phase 1)
-- **Drude**: Explicit polarizability (Phase 2, 2027-2028)
-
----
-
-## Citation
-
-```bibtex
-@software{davoh2026mica,
-  author      = {Davoh, Cyrille Egnon},
-  title       = {MICA-Kernel v1.0: TQIM-Davoh Analysis Engine},
-  year        = {2026},
-  institution = {kyriosMICA, Benin, West Africa},
-  url         = {https://github.com/kyriosMICA/mica-kernel},
-  note        = {Qudits-36 · TQIM-Davoh · Molecular Quantum Information Theory}
-}
-```
-
----
-
-## Contact
-
-**kyriosMICA Research Institute**
-Benin, West Africa · `direction@kyriosmica.com`
-[kyriosmica.com](https://kyriosmica.com) ·
-[lab.kyriosmica.com](https://lab.kyriosmica.com)
-
-*MICA = Matrice d'Intrication Coordonnée par les Amplitudes*
-*kyriosMICA = L'Opérateur Souverain de la Matrice d'Information Quantique de l'ADN*
-
----
-
-© 2026 Cyrille Egnon Davoh · MIT License
+**kyriosMICA** — Mathematical Interface for Cellular Architecture
+© 2026 Cyrille Egnon Davoh · direction@kyriosmica.com

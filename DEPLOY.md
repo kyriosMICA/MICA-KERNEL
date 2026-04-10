@@ -1,56 +1,46 @@
-# MICA-Kernel API — Guide de Déploiement
-# api.kyriosmica.com
-# kyriosMICA · © 2026 Cyrille Egnon Davoh
+# Déploiement MICA-Kernel v3.0
 
-# ════════════════════════════════════════
-# OPTION 1 — Railway.app (GRATUIT, 5 min)
-# ════════════════════════════════════════
+## Prérequis
+- Python 3.11+
+- NumPy, SciPy, FastAPI, Uvicorn, Pydantic
 
-# 1. Créer un compte sur railway.app
-# 2. New Project → Deploy from GitHub repo
-# 3. Sélectionner kyriosMICA/MICA-KERNEL
-# 4. Railway détecte automatiquement Python
-# 5. Variables d'environnement : aucune requise
-# 6. Domain → Custom domain → api.kyriosmica.com
+## Render (Production)
 
-# ════════════════════════════════════════
-# OPTION 2 — Render.com (GRATUIT, 10 min)
-# ════════════════════════════════════════
+Le repo est connecté à Render via GitHub.
+Push sur `main` → Render rebuild automatiquement.
 
-# 1. render.com → New Web Service
-# 2. Connect GitHub → kyriosMICA/MICA-KERNEL
-# 3. Build Command : pip install -r requirements.txt
-# 4. Start Command : uvicorn api:app --host 0.0.0.0 --port $PORT
-# 5. Free tier disponible
-# 6. Custom domain → api.kyriosmica.com
+```
+Procfile: web: uvicorn api:app --host 0.0.0.0 --port $PORT
+Runtime:  python-3.11.8
+```
 
-# ════════════════════════════════════════
-# OPTION 3 — Local (test immédiat)
-# ════════════════════════════════════════
+## Vérification post-deploy
 
-# pip install fastapi uvicorn numpy scipy
-# uvicorn api:app --host 0.0.0.0 --port 8000
-# → http://localhost:8000
-# → http://localhost:8000/docs  (documentation interactive)
+```bash
+curl https://api.kyriosmica.com/health
+# → {"status":"healthy","engine":"MICA-Kernel v3.0","features":"Bell/GHZ·MPS·Na⁺/K⁺/Mg²⁺"}
 
-# ════════════════════════════════════════
-# TESTS RAPIDES APRÈS DÉPLOIEMENT
-# ════════════════════════════════════════
+curl https://api.kyriosmica.com/
+# → liste des endpoints
+```
 
-# Health check
-# curl https://api.kyriosmica.com/health
+## Test complet
 
-# Analyser une séquence
-# curl -X POST https://api.kyriosmica.com/analyze \
-#   -H "Content-Type: application/json" \
-#   -d '{"sequence":"ATGCCCGAT","T_K":310,"pH":7.4}'
+```bash
+curl -X POST https://api.kyriosmica.com/codon \
+  -H "Content-Type: application/json" \
+  -d '{"codon":"CGC","conditions":{"temperature_K":310,"pH":7.4,"sodium_mM":140,"potassium_mM":5,"magnesium_mM":2.5},"topology":{"supercoiling_density":-0.06}}'
+```
 
-# Codon unique
-# curl -X POST https://api.kyriosmica.com/codon \
-#   -H "Content-Type: application/json" \
-#   -d '{"codon":"ATG","T_K":310}'
+## Fichiers modifiés v1 → v3
 
-# Conditions stress
-# curl -X POST https://api.kyriosmica.com/conditions \
-#   -H "Content-Type: application/json" \
-#   -d '{"T_K":310,"pH":6.0,"ionic_strength":0.18}'
+| Fichier | Action |
+|---------|--------|
+| api.py | REMPLACÉ — Pydantic v3, Na⁺/K⁺/Mg²⁺, Bell/GHZ |
+| mica/core.py | REMPLACÉ — 5 nouveaux modules |
+| mica/__init__.py | REMPLACÉ — exports mis à jour |
+| requirements.txt | REMPLACÉ — identique mais vérifié |
+| main.py | INCHANGÉ |
+| setup.py | INCHANGÉ |
+| Procfile | INCHANGÉ |
+| runtime.txt | INCHANGÉ |
