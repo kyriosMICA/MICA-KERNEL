@@ -1,57 +1,40 @@
-# ════════════════════════════════════════════════════════════════════
-#  MICA-Kernel v1.0
-#  kyriosMICA Research Institute · Benin, West Africa
-#  © 2026 Cyrille Egnon Davoh
-#  TQIM-Davoh · Qudits-36
-# ════════════════════════════════════════════════════════════════════
-
-__version__     = "1.0.0"
-__author__      = "Cyrille Egnon Davoh"
-__institution__ = "kyriosMICA · Benin, West Africa"
-__framework__   = "TQIM-Davoh · Qudits-36"
+__version__ = "3.0.0"
+__author__ = "Cyrille Egnon Davoh"
+__institution__ = "kyriosMICA · Bénin"
+__framework__ = "TQIM-Davoh v3 · Qudits-36 · Bell/GHZ · MPS · QNN"
 
 from .core import (
-    # Thermodynamics — Postulat de l'Indétermination
-    boltzmann_populations,
-    quantum_amplitudes,
-    kbt,
-    delta_E,
-
-    # EVK — Espace Vectoriel Kyriosmica
-    evk_vector,
-    evk_dimension,
-    evk_states_count,
-    evk_composition,
-    evk_label,
-
-    # ERK — Espace de Résonance Kyriosmica
-    erk_energy,
-
-    # MRK — Matrice de Résonance Kyriosmica
-    mrk_matrix,
-    mrk_invariants,
-
-    # Postulat de la Mutabilité
+    # Constants
+    ionic_strength_from_ions,
+    # Postulat I
+    boltzmann_populations, quantum_amplitudes, boltzmann_bond,
+    kbt_kcal, energy_total, delta_E,
+    # EVK
+    evk_vector, evk_dimension, evk_states_count, evk_composition, evk_label,
+    # ERK
+    erk_energy, lambda_eff,
+    # MRK
+    mrk_matrix, mrk_invariants, mrk_matrix_from_vector,
+    # Bell/GHZ
+    bell_ghz_filter_AT, bell_ghz_filter_CG, build_pair_density,
+    # MPS Level 1
+    mps_contract_codon,
+    # MPS Level 2
+    mps_contract_mih21,
+    # Postulat IV
     mutation_probability,
-
-    # MIH-21 — Postulat de la Cohérence
+    # MIH-21
     mih21_analysis,
-
-    # Monte Carlo quantum collapse
+    # Monte Carlo
     quantum_collapse_mc,
-
-    # Full sequence analysis
+    # Von Neumann
+    von_neumann_entropy,
+    # Classification
+    classify_conformation,
+    # Inference
+    infer_from_cavity, sample_from_mih21,
+    # T₃-Net QNN
+    T3Net, t3net_train_on_sequence, t3net_extract_features,
+    # Full analysis
     analyze_sequence,
 )
-
-__all__ = [
-    'boltzmann_populations', 'quantum_amplitudes', 'kbt', 'delta_E',
-    'evk_vector', 'evk_dimension', 'evk_states_count',
-    'evk_composition', 'evk_label',
-    'erk_energy',
-    'mrk_matrix', 'mrk_invariants',
-    'mutation_probability',
-    'mih21_analysis',
-    'quantum_collapse_mc',
-    'analyze_sequence',
-]
