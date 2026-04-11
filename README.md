@@ -111,5 +111,5 @@ uvicorn api:app --host 0.0.0.0 --port 8000
 
 ---
 
-**kyriosMICA** — Mathematical Interface for Cellular Architecture
+**kyriosMICA** — Matrice d'Intrication Coordonnée par les Amplitudes
 © 2026 Cyrille Egnon Davoh · direction@kyriosmica.com
