@@ -867,11 +867,47 @@ def analyze_sequence(sequence, T_K=300.0, pH=7.4,
 
     codons_raw = [seq[i:i+3] for i in range(0, len(seq)-2, 3)
                   if len(seq[i:i+3]) == 3 and all(b in 'ATCG' for b in seq[i:i+3])]
-    stop = {'TAA', 'TAG', 'TGA'}; codons = []
-    for c in codons_raw:
-        if c in stop: break
-        codons.append(c)
-    if not codons: raise ValueError("No valid codons")
+
+    # ── Auto-detect reading frame ─────────────────────────────
+    # Priority 1: If starts with ATG → user pasted CDS → use frame 0
+    # Priority 2: If frame 0 ORF is too short → find longest ORF in all 3 frames
+    # This handles: raw CDS, full mRNA with UTRs, FASTA, any sequence.
+    stop_set = {'TAA', 'TAG', 'TGA'}
+    codons = []
+
+    if codons_raw and codons_raw[0] == 'ATG':
+        for c in codons_raw:
+            if c in stop_set: break
+            codons.append(c)
+        # If ORF is reasonable (≥50 codons or ≥10% of raw), accept it
+        if len(codons) >= 50 or len(codons) >= len(codons_raw) * 0.1:
+            pass  # Good ORF from frame 0
+        else:
+            codons = []  # Too short — fall through to multi-frame search
+
+    # If no good ORF from frame 0, search all 3 frames for longest ORF
+    if not codons:
+        best_orf = []
+        for frame in range(3):
+            fc = [seq[i:i+3] for i in range(frame, len(seq)-2, 3)
+                  if len(seq[i:i+3]) == 3 and all(b in 'ATCG' for b in seq[i:i+3])]
+            i = 0
+            while i < len(fc):
+                if fc[i] == 'ATG':
+                    orf = []; j = i
+                    while j < len(fc):
+                        if fc[j] in stop_set: break
+                        orf.append(fc[j]); j += 1
+                    if len(orf) > len(best_orf):
+                        best_orf = orf
+                    i = j + 1
+                else:
+                    i += 1
+        codons = best_orf
+
+    # Fallback: no ORF found → use all raw codons without stop filtering
+    if not codons and codons_raw:
+        codons = [c for c in codons_raw if c not in stop_set]
 
     P = boltzmann_populations(T_K, pH, I_mol, magnesium_mM=magnesium_mM)
     amp = quantum_amplitudes(T_K, pH, I_mol, magnesium_mM=magnesium_mM)
